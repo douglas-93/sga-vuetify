@@ -43,7 +43,7 @@
 
     <!-- Mensagem de sucesso -->
     <v-snackbar v-model="snackbar" :timeout="2000" color="success">
-      Pessoa cadastrada com sucesso!
+      Empresa cadastrada com sucesso!
     </v-snackbar>
   </v-app>
 </template>
