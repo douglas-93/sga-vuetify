@@ -17,16 +17,16 @@ import {
   faBuilding,
   faCar,
   faCog,
-  faHome,
+  faHome, faMoon,
   faSignIn,
-  faSignOut,
+  faSignOut, faSun,
   faUser,
   faUsers
 } from "@fortawesome/free-solid-svg-icons";
 
 const app = createApp(App)
 
-library.add(faUser, faUsers, faHome, faCar, faBuilding, faCog, faSignOut, faSignIn);
+library.add(faUser, faUsers, faHome, faCar, faBuilding, faCog, faSignOut, faSignIn, faSun, faMoon);
 
 registerPlugins(app)
 app.mount('#app')

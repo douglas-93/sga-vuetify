@@ -27,7 +27,7 @@ const router = useRouter();
 
 const goToPage = (page: string) => {
   if (page) {
-    router.push(`${page}`);
+    router.push(`/${page}`);
   }
 };
 </script>

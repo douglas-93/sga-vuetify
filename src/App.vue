@@ -5,6 +5,9 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Sistema de Gestão de Acesso :: SGA</v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-btn icon @click.stop="toggleTheme">
+        <font-awesome-icon :icon="['fas', themeIcon]"/>
+      </v-btn>
       <v-btn icon>
         <v-icon>mdi-export</v-icon>
       </v-btn>
@@ -21,8 +24,8 @@
 
         <v-list-subheader>HOME</v-list-subheader>
         <v-list-item
-        color="secondary"
-        @click="goToPage('/')">
+          color="secondary"
+          @click="goToPage('/')">
           <template v-slot:prepend>
             <font-awesome-icon :icon="['fas', 'home']" class="mr-5"/>
           </template>
@@ -72,35 +75,36 @@
   </v-app>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { useRouter } from 'vue-router';
+<script lang="ts" setup>
+import {ref} from 'vue';
+import {useTheme} from 'vuetify'
+import {useRouter} from 'vue-router';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
-export default defineComponent({
-  setup() {
-    const drawer = ref(false);
-    const items = ref([
-      { text: 'Pessoas', icon: 'users', value: '/pessoas' },
-      { text: 'Veículos', icon: 'car', value: '/veiculos' },
-      { text: 'Empresas', icon: 'building', value: '/empresas' },
-      { text: 'Controladores', icon: 'user', value: '/controladores' }
-    ]);
+const drawer = ref(false);
+const router = useRouter();
+const theme = useTheme()
+const themeIcon = ref('sun');
 
-    const router = useRouter();
+const items = ref([
+  {text: 'Pessoas', icon: 'users', value: '/pessoas'},
+  {text: 'Veículos', icon: 'car', value: '/veiculos'},
+  {text: 'Empresas', icon: 'building', value: '/empresas'},
+  {text: 'Controladores', icon: 'user', value: '/controladores'}
+]);
 
-    const goToPage = (page: string) => {
-      if (page) {
-        router.push(`${page}`);
-      }
-    };
+const goToPage = (page: string) => {
+  if (page) {
+    router.push(`${page}`);
+  }
 
-    return {
-      drawer,
-      items,
-      goToPage,
-    };
-  },
-});
+};
+
+const toggleTheme = () => {
+  themeIcon.value === 'sun' ? themeIcon.value = 'moon' : 'sun'
+  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
+}
+
 </script>
 
 <style>
