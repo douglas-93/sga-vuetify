@@ -100,8 +100,7 @@ import {ControladorModel} from "@/models/controlador.model";
 
 // Criando o modelo de pessoa como reativo
 const controlador = reactive(new ControladorModel());
-controlador.nome = '';
-controlador.documento = '';
+
 const documentoSelecionado = ref('rg');
 const caracteresDocumento = ref(13);
 

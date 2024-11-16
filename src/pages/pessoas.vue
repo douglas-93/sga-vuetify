@@ -68,8 +68,7 @@ import {applyCpfMask, applyRgMask} from "@/utils/formatadores";
 
 // Criando o modelo de pessoa como reativo
 const pessoa = reactive(new PessoaModel());
-pessoa.nome = '';
-pessoa.documento = '';
+
 const documentoSelecionado = ref('rg');
 const caracteresDocumento = ref(13);
 

@@ -54,8 +54,7 @@ import {EmpresaModel} from "@/models/empresa.model";
 
 // Criando o modelo de pessoa como reativo
 const empresa = reactive(new EmpresaModel());
-empresa.nome = '';
-empresa.cnpj = '';
+
 
 // Estado do formulário e validação
 const valid = ref(false);
