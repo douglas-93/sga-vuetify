@@ -71,9 +71,13 @@
               label="Senha"
               required
               variant="outlined"
-              clearable
-              :type="'password'"
-            ></v-text-field>
+              :type="inputType"
+            >
+              <template v-slot:append-inner>
+                <font-awesome-icon class="cursor-pointer" @click.stop="togglePassword" :icon="['fas', passwordIcon]"/>
+              </template>
+            </v-text-field>
+
           </v-col>
         </v-row>
 
@@ -97,16 +101,17 @@
 import {reactive, ref} from 'vue';
 import {applyCpfMask, applyRgMask} from "@/utils/formatadores";
 import {ControladorModel} from "@/models/controlador.model";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 // Criando o modelo de pessoa como reativo
 const controlador = reactive(new ControladorModel());
-
 const documentoSelecionado = ref('rg');
 const caracteresDocumento = ref(13);
-
-// Estado do formulário e validação
+const inputType = ref('password');
+const passwordIcon = ref('eye');
 const valid = ref(false);
 const snackbar = ref(false);
+
 
 // Regras de validação para os campos
 const nameRules = [
@@ -129,6 +134,11 @@ const submitForm = () => {
 const aplicaMascara = () => {
   caracteresDocumento.value = documentoSelecionado.value === 'cpf' ? 14 : 13;
   documentoSelecionado.value === 'cpf' ? applyCpfMask(controlador) : applyRgMask(controlador);
+}
+
+const togglePassword = () => {
+  inputType.value = (inputType.value === 'password') ? 'text' : 'password';
+  passwordIcon.value = (passwordIcon.value === 'eye') ? 'eye-slash' : 'eye';
 }
 </script>
 
