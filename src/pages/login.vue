@@ -17,7 +17,7 @@
       <v-text-field
         density="compact"
         placeholder="Informe seu usuário"
-        prepend-inner-icon="mdi-email-outline"
+        prepend-inner-icon="mdi-account"
         variant="outlined"
       ></v-text-field>
 
