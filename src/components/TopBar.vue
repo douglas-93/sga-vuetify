@@ -7,7 +7,7 @@
       <v-btn icon @click.stop="toggleTheme">
         <font-awesome-icon :icon="['fas', themeIcon]"/>
       </v-btn>
-      <v-btn icon>
+      <v-btn icon @click="goToPage('/login')">
         <v-icon>mdi-export</v-icon>
       </v-btn>
     </v-app-bar>
