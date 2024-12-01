@@ -8,17 +8,16 @@
           <h1 class="text-center">Cadastro de Pessoas</h1>
         </v-row>
         <v-row>
-
-
           <v-col cols="12" md="5">
-            <v-text-field v-model="pessoa.nome" label="Nome" :rules="nameRules" required variant="outlined" clearable
-              @input="pessoa.nome = pessoa.nome.toUpperCase()"></v-text-field>
+            <v-text-field v-model="pessoa.nome" :rules="nameRules" clearable label="Nome" required variant="outlined"
+                          @input="pessoa.nome = pessoa.nome.toUpperCase()"></v-text-field>
           </v-col>
 
 
-          <v-col cols="12" md="2" class="d-flex align-center justify-end flex-fill">
-            <v-spacer></v-spacer><v-spacer></v-spacer>
-            <v-radio-group inline v-model="documentoSelecionado" @change="aplicaMascara">
+          <v-col class="d-flex align-center justify-end flex-fill" cols="12" md="2">
+            <v-spacer></v-spacer>
+            <v-spacer></v-spacer>
+            <v-radio-group v-model="documentoSelecionado" inline @change="aplicaMascara">
               <v-radio label="RG" value="rg"></v-radio>
               <v-radio label="CPF" value="cpf"></v-radio>
             </v-radio-group>
@@ -26,8 +25,8 @@
 
 
           <v-col cols="12" md="5">
-            <v-text-field v-model="pessoa.documento" label="Documento" required variant="outlined" clearable
-              @input="aplicaMascara" :maxlength="caracteresDocumento"></v-text-field>
+            <v-text-field v-model="pessoa.documento" :maxlength="caracteresDocumento" clearable label="Documento" required
+                          variant="outlined" @input="aplicaMascara"></v-text-field>
           </v-col>
         </v-row>
 
@@ -50,10 +49,10 @@
 
         <v-row>
           <v-col cols="12" md="4">
-            <v-text-field label="Nome" variant="outlined" clearable v-model="nome"></v-text-field>
+            <v-text-field v-model="nome" clearable label="Nome" variant="outlined"></v-text-field>
           </v-col>
           <v-col cols="12" md="4">
-            <v-text-field label="Documento" variant="outlined" clearable v-model="documento"></v-text-field>
+            <v-text-field v-model="documento" clearable label="Documento" variant="outlined"></v-text-field>
           </v-col>
           <v-col cols="12" md="4">
             <v-btn @click="buscarPessoas()">Pesquisar</v-btn>
@@ -62,23 +61,35 @@
 
         <v-table v-if="listaPessoas.length > 0">
           <thead>
-            <tr>
-              <th class="text-left">
-                Nome
-              </th>
-              <th class="text-left">
-                Documento
-              </th>
-            </tr>
+          <tr>
+            <th class="text-center">
+              Nome
+            </th>
+            <th class="text-center">
+              Documento
+            </th>
+          </tr>
           </thead>
           <tbody>
-            <tr v-for="item in listaPessoas" :key="item.id">
-              <td>{{ item.nome }}</td>
-              <td>{{ item.documento }}</td>
-            </tr>
+          <tr v-for="item in listaPessoas" :key="item.id">
+            <td>{{ item.nome }}</td>
+            <td>{{ item.documento }}</td>
+            <td>
+              <v-menu>
+                <template v-slot:activator="{ props }">
+                  <v-btn icon="mdi-dots-vertical" v-bind="props" variant="text"></v-btn>
+                </template>
+
+                <v-list>
+                  <v-list-item v-for="(option, i) in items" :key="i" class="cursor-pointer">
+                    <v-list-item-title @click="option.func(item.id)">{{ option.title }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </td>
+          </tr>
           </tbody>
         </v-table>
-
 
 
       </v-card>
@@ -92,10 +103,10 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue';
-import { PessoaModel } from "@/models/pessoa.model";
-import { applyCpfMask, applyRgMask } from "@/utils/formatadores";
-import { BaseService } from "@/services/base.service";
+import {reactive, ref} from 'vue';
+import {PessoaModel} from "@/models/pessoa.model";
+import {applyCpfMask, applyRgMask} from "@/utils/formatadores";
+import {BaseService} from "@/services/base.service";
 
 // Criando o modelo de pessoa como reativo
 const pessoa = reactive(new PessoaModel());
@@ -124,26 +135,35 @@ const nameRules = [
 ];
 
 // Função para simular o envio do formulário
-const submitForm = () => {
-  baseService.create(pessoa).then(res => {
-    if (res.status === 201) {
-      pessoa.documento = '  ';
-      pessoa.nome = '';
-      snackbar.value = true;
-    }
-  });
+const submitForm = async () => {
+  if (!pessoa.id) {
+    await baseService.create(pessoa).then(res => {
+      if (res.status === 201) {
+        Object.assign(pessoa, new PessoaModel());
+        snackbar.value = true;
+      }
+    });
+  } else {
+    await baseService.update(pessoa).then(res => {
+      if (res.status === 201) {
+        Object.assign(pessoa, new PessoaModel());
+        snackbar.value = true;
+      }
+    });
+    buscarPessoas();
+  }
 };
 
 const buscarPessoas = async () => {
-  console.log(nome.value);
-  console.log(documento.value);
-  
-  
   if ((nome.value != '' && nome.value != null) || (documento.value != '' && documento.value != null)) {
-    let data: any =[];
-    if (nome.value != '' && nome.value != null) {data.push({chave: 'nome', valor: nome.value})}
-    if (documento.value != '' && documento.value != null) {data.push({chave: 'documento', valor: documento.value})}
-    
+    let data: any = [];
+    if (nome.value != '' && nome.value != null) {
+      data.push({chave: 'nome', valor: nome.value})
+    }
+    if (documento.value != '' && documento.value != null) {
+      data.push({chave: 'documento', valor: documento.value})
+    }
+
     await baseService.getBy(data).then(res => {
       if (res.status === 200) {
         listaPessoas.value = res.data;
@@ -158,15 +178,28 @@ const buscarPessoas = async () => {
   }
 }
 
+const editar = (id: number) => {
+  let p = listaPessoas.value.find((item) => item.id === id);
+  pessoa.id = p.id;
+  pessoa.nome = p.nome;
+  pessoa.documento = p.documento;
+  documentoSelecionado.value = pessoa.documento.length === 14 ? 'cpf' : 'rg';
+}
+
+const excluir = (id: number) => {
+  console.log(id)
+}
+
+const items = [
+  {title: 'Editar', func: editar},
+  {title: 'Excluir', func: excluir},
+];
+
 const aplicaMascara = () => {
   caracteresDocumento.value = documentoSelecionado.value === 'cpf' ? 14 : 13;
   documentoSelecionado.value === 'cpf' ? applyCpfMask(pessoa) : applyRgMask(pessoa);
 }
 
-// const baseService = new BaseService<PessoaModel>('/pessoas');
-// baseService.getAll().then(res => {
-//   console.log(res.data);
-// });
 </script>
 
 <style scoped>

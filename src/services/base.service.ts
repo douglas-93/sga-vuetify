@@ -20,4 +20,8 @@ export class BaseService<T> {
   async create(data: T): Promise<T> {
     return await this._axios.post(this._url, data);
   }
+
+  async update(data: T): Promise<T> {
+    return await this._axios.put(this._url, data);
+  }
 }
